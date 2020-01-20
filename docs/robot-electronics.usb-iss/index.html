@@ -1,0 +1,730 @@
+<html>
+
+<head>
+<title>USB-ISS Communications Module</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<p align="center"><b><font size="5">USB-ISS&nbsp; Multifunction USB Communications Module</font><font size="3"><br>
+Technical Specification</font></b></p>
+
+[source link: <a href="http://www.robot-electronics.co.uk/htm/usb_iss_tech.htm">http://www.robot-electronics.co.uk/htm/usb_iss_tech.htm</a>]
+
+<p align="left"><b>Overview</b><br>
+The USB-ISS Multifunction USB Communications Module provides a
+complete interface between your PC and the I2C bus, SPI bus, a Serial port
+and general purpose Analogue Input or Digital I/O. The module is powered
+from the USB. Operating voltage is selectable between 3.3v and 5v. and can supply up to
+80mA at 5v for external circuitry from a
+standard 100mA USB port.</p>
+<table border="0" cellpadding="0">
+  <tr>
+    <td align="right"></td>
+    <td align="center">USB-I2C</td>
+    <td align="center" width="10"></td>
+    <td align="center">USB-ISS</td>
+    <td></td>
+    <td width="400" rowspan="14">
+      <p align="right"><img border="0" src="./img/usb-iss-300.png" width="300" height="260"></td>
+  </tr>
+  <tr>
+    <td align="right">USB Powered</td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">Support I2C at 100khz</td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">Support I2C at 20khz-1000khz</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td>Fixed 20,50,100,400 &amp;1000khz</td>
+  </tr>
+  <tr>
+    <td align="right">I2C + I/O</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">SPI Mode</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td>24khz to 3Mhz</td>
+  </tr>
+  <tr>
+    <td align="right">Serial Mode</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td>300baud to 3Mbaud</td>
+  </tr>
+  <tr>
+    <td align="right">I2C Direct</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td>Used to build custom I2C sequences</td>
+  </tr>
+  <tr>
+    <td align="right">Bootloader for user updates</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td>Uses Microchip Bootloader</td>
+  </tr>
+  <tr>
+    <td align="right">Supply power to external Circuit</td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td>Up to 80mA for USB-ISS&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="right">5v operation</td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">3.3v operation</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right">Mounting holes on PCB</td>
+    <td align="center"><img border="0" src="./img/cross.bmp" width="15" height="13"></td>
+    <td align="center"></td>
+    <td align="center"><img border="0" src="./img/tick.bmp" width="15" height="13"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right"></td>
+    <td align="center"></td>
+    <td align="center"></td>
+    <td align="center"></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="right"></td>
+    <td align="center"></td>
+    <td align="center"></td>
+    <td align="center"></td>
+    <td></td>
+  </tr>
+</table>
+<p align="left"><b>Documentation</b><br>
+This documentation is divided up into 6 pages.<br>
+1. This page describes the connections to the USB-ISS, the USB
+driver installation and setting of the USB-ISS operating modes.<br>
+Five further pages describe the operational commands and the Boot-Loader.<br>
+2. <a href="usb_iss_i2c_tech.html">I2C Operation</a>, describes all the I2C
+commands available<br>
+3. <a href="usb_iss_spi_tech.html">SPI Operation</a>, describes the format for
+SPI communication<br>
+4.<a href="usb_iss_serial_tech.html">Serial Operation</a>, describes how to send
+and receive serial data.<br>
+5. <a href="usb_iss_io_tech.html">I/O Operation</a>,&nbsp; describes how to set
+pins high/low and read digital or analogue inputs.<br>
+6. <a href="http://www.robot-electronics.co.uk/htm/usb_iss_boot.htm">Boot Loader</a>, describes how to update the
+firmware in the USB-ISS.</p>
+<p align="left"><b>First Step - Get The Drivers</b><br>
+Before connecting the USB-ISS module, you should <a href="http://www.robot-electronics.co.uk/files/usb-devtech-inf.zip">download
+the driver</a> and unzip it to a temporary folder. Now connect the USB-ISS
+module&nbsp;and navigate windows to the temporary folder and install the driver.
+The USB-ISS will now appear as a COM port.</p>
+<p align="left"><b>Which COM port?<br>
+</b>After installing the drivers, and plugging in the USB-ISS module to a spare USB
+port, you will want to know which COM port it has been assigned to. This will
+vary from system to system depending on how many COM ports you currently have
+installed. To find out where it is, right click on your &quot;My Computer&quot;
+desktop icon and select &quot;Properties-&gt;Hardware-&gt;Device Manager&quot;. Now scroll down and
+open the &quot;Ports (COM &amp; LPT)&quot; tab. You should see the USB serial
+port listed - COM5 in the example below. If you want to change the COM port
+number - just right click on it, select properties, select advanced and select
+the COM port number from the available list. The COM port default will probably be set up for
+      9600 baud, 8 data bits, no parity and one stop bits, but what ever it is
+      just ignore it. These settings are not actually used because we have a
+      full 12Mbits USB connection right into the heart of the processor.</p>
+<p align="center"><img border="0" src="./img/DeviceManager.png" width="315" height="371">
+</p>
+<p align="left"><b>Connections</b><br>
+The diagram below shows the connections for the various modes.
+</p>
+<div align="center">
+  <center>
+  <table border="0" cellspacing="0">
+    <tr>
+      <td width="50%">Power Link - Remove for 3.3v operation.</td>
+      <td width="50%"></td>
+    </tr>
+    <tr>
+      <td width="50%">
+        <p align="center"><img border="0" src="./img/usb-iss-connect.png" width="450" height="192"></td>
+      <td width="50%">
+        <table border="1" width="100%" cellspacing="0" cellpadding="2">
+          <tr>
+            <td width="80" align="center" height="27"><b>I/O</b></td>
+            <td width="80" align="center" height="27"><b>SPI</b></td>
+            <td width="80" align="center" height="27"><b>Serial</b></td>
+            <td width="80" align="center" height="27"><b>I2C</b></td>
+            <td width="80" align="center" height="27"><b>I2C+Serial</b></td>
+          </tr>
+          <tr>
+            <td width="80" align="center" height="27"><font color="#FF0000">3.3v
+              / 5v</font></td>
+            <td width="80" align="center" height="27"><font color="#FF0000">3.3v
+              / 5v</font></td>
+            <td width="80" align="center" height="27"><font color="#FF0000">3.3v
+              / 5v</font></td>
+            <td width="80" align="center" height="27"><font color="#FF0000">3.3v
+              / 5v</font></td>
+            <td width="80" align="center" height="27"><font color="#FF0000">3.3v
+              / 5v</font></td>
+          </tr>
+          <tr>
+            <td width="80" align="center" height="27">I/O4</td>
+            <td width="80" align="center" height="27">SDI</td>
+            <td width="80" align="center" height="27">I/O4</td>
+            <td width="80" align="center" height="27">SDA</td>
+            <td width="80" align="center" height="27">SDA</td>
+          </tr>
+          <tr>
+            <td width="80" align="center" height="27">I/O3</td>
+            <td width="80" align="center" height="27">SCK</td>
+            <td width="80" align="center" height="27">I/O3</td>
+            <td width="80" align="center" height="27">SCL</td>
+            <td width="80" align="center" height="27">SCL</td>
+          </tr>
+          <tr>
+            <td width="80" align="center" height="27">I/O2</td>
+            <td width="80" align="center" height="27">SDO</td>
+            <td width="80" align="center" height="27">Tx</td>
+            <td width="80" align="center" height="27">I/O2</td>
+            <td width="80" align="center" height="27">Tx</td>
+          </tr>
+          <tr>
+            <td width="80" align="center" height="27">I/O1</td>
+            <td width="80" align="center" height="27">/CE</td>
+            <td width="80" align="center" height="27">Rx</td>
+            <td width="80" align="center" height="27">I/O1</td>
+            <td width="80" align="center" height="27">Rx</td>
+          </tr>
+          <tr>
+            <td width="80" height="27" align="center"><font color="#0000FF">0v
+              Ground</font></td>
+            <td width="80" height="27" align="center"><font color="#0000FF">0v
+              Ground</font></td>
+            <td width="80" height="27" align="center"><font color="#0000FF">0v
+              Ground</font></td>
+            <td width="80" height="27" align="center"><font color="#0000FF">0v
+              Ground</font></td>
+            <td width="80" height="27" align="center"><font color="#0000FF">0v
+              Ground</font></td>
+          </tr>
+          <tr>
+            <td width="20%" height="27" align="center"></td>
+            <td width="20%" height="27" align="center"></td>
+            <td width="20%" height="27" align="center"></td>
+            <td width="20%" height="27" align="center"></td>
+            <td width="20%" height="27" align="center"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td width="50%">Bootloader Link - Fit link for Bootloader mode</td>
+      <td width="50%"></td>
+    </tr>
+  </table>
+  </center>
+</div>
+<p align="left"><b>3.3v or 5v<br>
+</b>Add the link for 5v, remove it for 3.3v<b><br>
+</b>The processor on the USB-ISS is equally happy running from 3.3v or from 5v.
+With the LEDs it takes up to 20mA so when 5v is selected by linking the power
+select pins, the USB-ISS module can supply up to 80mA to external
+devices. When the link is removed a 3.3v regulator supplies the power. This
+regulator is capable of 50mA, so when running at 3.3v up to 30mA is available to
+your circuits. If your application requires more than this, or has its own supply, then
+leave the 3.3v/5v pin unconnected. Do not apply your own voltage to this pin.
+</p>
+<p align="left"><b>LEDs</b><br>
+The Green Led is a power indication and is on all the time the module is
+connected to a powered USB port. The Red LED will flash whenever there is a
+valid I2C or SPI command received.
+</p>
+<p align="left"><b>I/O pins<br>
+</b>Each I/O pin, 1 to 4, may be individually selected to be Analogue Input or Digital
+Input or Digital Output.&nbsp;<br>
+Inputs will not accept voltage higher than the supply, so <font color="#FF0000">when
+operating at 3.3v the inputs are NOT 5v tolerant</font>.&nbsp;&nbsp;<br>
+Analogue inputs span from 0v to the supply for a range of 0-1023 (10-bit A/D
+conversion).
+</p>
+<p align="left"><b>SCL and SDA</b>&nbsp;<br>
+These pins are the I2C bus connections. They should be connected directly to the
+SCL and SDA pins on your I2C device. The USB-ISS module is always a bus master,
+and is fitted with 4.7k pull-up resistors on the PCB.&nbsp;These resistors are
+automatically disconnected in other modes.
+</p>
+<p align="left"><b>SDI, SCK, SDO and CE</b><br>
+SDI is the SPI input to the USB-ISS, connect it to SDO on your device.<br>
+SDO is the SPI output from the USB-ISS, connect it to SDI on your device.<br>
+SCK is the SPI clock output from the USB-ISS, connect it to SCK on your device.<br>
+CE is the active low chip enable signal, connect it to CE on your device.
+</p>
+<p align="left"><b>Tx and Rx</b><br>
+These are logic level signals, not RS232. <font color="#FF0000">Do not connect
+this to an RS232 port</font> without using a suitable RS232 logic level inverter chip.
+</p>
+<p align="left"><b>0v Ground<br>
+</b>The 0v Ground pin must be connected to the 0v (Ground) on your device.
+</p>
+<p align="left"><b>Setup Commands<br>
+</b>The <b>USB-ISS</b> command (0x5A) is used for internal operations. The are
+three sub-commands:</p>
+<table border="1" cellspacing="0" bgcolor="#FFFFCC" width="920">
+  <tr>
+    <td align="center" width="117">Command</td>
+    <td align="center" width="168">SubCommand</td>
+    <td align="center" width="621">Description</td>
+  </tr>
+  <tr>
+    <td align="center" width="117">USB-ISS (0x5A)</td>
+    <td align="center" width="168">ISS_VERSION (0x01)</td>
+    <td align="center" width="621">Returns 3 bytes, the module ID (7), firmware version and the current operating mode.</td>
+  </tr>
+  <tr>
+    <td align="center" width="117">USB-ISS (0x5A)</td>
+    <td align="center" width="168">ISS_MODE (0x02)</td>
+    <td align="center" width="621">Sets operating mode, I2C/SPI/Serial etc. See
+      next section for details</td>
+  </tr>
+  <tr>
+    <td align="center" width="117">USB-ISS (0x5A)</td>
+    <td align="center" width="168">GET_SER_NUM (0x03)</td>
+    <td align="center" width="621">Returns the modules unique 8 byte USB serial
+      number.</td>
+  </tr>
+</table>
+<p align="left"><b>ISS-VERSION</b> will return three bytes. The first is the
+Module ID, this will always be 7. The second byte is the firmware revision
+number. The third byte is the current operating mode, ISS_MODE. This is
+initialized to 0x40 (I2C-S_100KHZ) on power up.<br>
+Example:&nbsp;<br>
+Send 0x5A, 0x01.&nbsp;<br>
+Receive 0x07, 0x02, 0x40.</p>
+<p align="left">
+<b>GET_SER_NUM</b> will return the modules unique 8 byte USB serial
+number.&nbsp;<br>
+Example:<br>
+Send 0x5A, 0x03.&nbsp;<br>
+Receive 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x31. (that's
+&quot;00000001&quot;)<br>
+The received serial number will always be ASCII digits in the range
+&quot;0&quot; to &quot;9&quot; ( 0x30 to 0x39 ).</p>
+<p align="left">
+<b>ISS_MODE</b> sets the operating mode. This sets up the modules I/O pins and
+hardware for the required mode. There are 4 operating modes (I2C, SPI, Serial
+and I/O) some which can be combined. I2C mode is further broken down into the
+various fixed frequencies and the use of software (bit bashed) or hardware I2C
+ports. The full list is:</p>
+<table border="1" cellspacing="0" cellpadding="5" bgcolor="#FFFFCC">
+  <tr>
+    <td>Operating Mode</td>
+    <td>Value</td>
+  </tr>
+  <tr>
+    <td>IO_MODE</td>
+    <td>			0x00&nbsp;</td>
+  </tr>
+  <tr>
+    <td>IO_CHANGE</td>
+    <td>			0x10</td>
+  </tr>
+  <tr>
+    <td>I2C_S_20KHZ</td>
+    <td>		0x20</td>
+  </tr>
+  <tr>
+    <td> I2C_S_50KHZ</td>
+    <td>		0x30</td>
+  </tr>
+  <tr>
+    <td> I2C_S_100KHZ</td>
+    <td>		0x40&nbsp;</td>
+  </tr>
+  <tr>
+    <td> I2C_S_400KHZ&nbsp;</td>
+    <td>		0x50&nbsp;</td>
+  </tr>
+  <tr>
+    <td>I2C_H_100KHZ</td>
+    <td>		0x60</td>
+  </tr>
+  <tr>
+    <td> I2C_H_400KHZ</td>
+    <td>		0x70</td>
+  </tr>
+  <tr>
+    <td> I2C_H_1000KHZ</td>
+    <td>	0x80</td>
+  </tr>
+  <tr>
+    <td> SPI_MODE&nbsp;</td>
+    <td>			0x90</td>
+  </tr>
+  <tr>
+    <td> SERIAL&nbsp;</td>
+    <td>				0x01</td>
+  </tr>
+</table>
+<p align="left">I/O_CHANGE is not really an operating mode. It's used to change
+the I/O mode between Analogue Input, Digital Input and digital Output without
+changing Serial or I2C settings.<br>
+The I2C modes will have I/O on the I/O1 and I/O2 pins.<br>
+Serial mode will have I/O on the I/O3 and I/O4 pins.<br>
+I2C and Serial can be combined, for example I2C_S_100KHZ (0x40) + SERIAL (0x01)
+= 0x41.<br>
+SPI requires all four I/O pins so there are no other options for this mode.</p>
+<table border="0" cellspacing="0" cellpadding="0" width="978">
+  <tr>
+    <td width="976" height="21" colspan="3"><b> IO_MODE</b></td>
+  </tr>
+  <tr>
+    <td colspan="3" width="976">
+      <p align="left">I/O mode requires one further <b> IO_TYPE </b>byte to set the I/O type for
+      each pin. &nbsp;</td>
+  </tr>
+  <tr>
+    <td width="976" colspan="3"> The <b>  IO_TYPE</b> byte is made up from 4 pairs of
+      bits, 1 pair for each I/O pin - 4B,4A, 3B,3A, 2B,2A, 1B,1A</td>
+  </tr>
+  <tr>
+    <td width="117" height="21">
+      <p align="right">where each pair is:</td>
+    <td width="66" align="center" height="21">xB xA</td>
+    <td width="789" height="21"></td>
+  </tr>
+  <tr>
+    <td width="117" height="20"></td>
+    <td width="66" align="center" height="20">0&nbsp;&nbsp; 0</td>
+    <td width="789" height="20">		Output Low</td>
+  </tr>
+  <tr>
+    <td width="117" height="21"></td>
+    <td width="66" align="center" height="21">0&nbsp; 1</td>
+    <td width="789" height="21">    Output High</td>
+  </tr>
+  <tr>
+    <td width="117" height="21"></td>
+    <td width="66" align="center" height="21">1&nbsp; 0</td>
+    <td width="789" height="21">    Digital Input</td>
+  </tr>
+  <tr>
+    <td width="117" height="21"></td>
+    <td width="66" align="center" height="21">1&nbsp; 1</td>
+    <td width="789" height="21">    Analogue Input</td>
+  </tr>
+</table>
+<p align="left">For example 0x01 (binary 00000001) would set I/O1 to output high
+and I/O's 2-4 to output low.<br>
+0xB4 (binary 10110100) would set I/O4 to digital input, I/O3 to analogue input,
+I/O2 to output high and I/O1 to output low.<br>
+The four byte command to set I/O mode is:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" width="586">
+  <tr>
+    <td width="100" align="center">ISS_CMD</td>
+    <td width="100" align="center">ISS_MODE</td>
+    <td width="100" align="center">IO_MODE</td>
+    <td width="300" align="center">IO_TYPE (see example above)</td>
+  </tr>
+  <tr>
+    <td width="100" align="center">0x5A</td>
+    <td width="100" align="center">0x02</td>
+    <td width="100" align="center">0x00</td>
+    <td width="274" align="center">0xB4</td>
+  </tr>
+</table>
+<p align="left">I/O mode may be combined with SERIAL mode.<br>
+When combined with SERIAL, I/O1 is the Rx pin and I/O2 is the Tx pin. Only I/O3
+and I/O are available as I/O pins.<br>
+This is a 6 byte setup command.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">ISS_CMD</td>
+    <td align="center">ISS_MODE</td>
+    <td align="center">IO_MODE+SERIAL</td>
+    <td align="center">Baud rate divisor (high byte)</td>
+    <td align="center">Baud rate divisor (low byte)</td>
+    <td align="center">IO_TYPE (see example above)</td>
+  </tr>
+  <tr>
+    <td align="center">0x5A</td>
+    <td align="center">0x02</td>
+    <td align="center">0x01</td>
+    <td align="center">0x00</td>
+    <td align="center">0x9B</td>
+    <td align="center">0xB0</td>
+  </tr>
+</table>
+<p align="left">In all mode setting commands, two bytes are returned. See <a href="#Response Bytes">Response
+Bytes</a> below.</p>
+<p align="left">The formula for calculating the baud rate is:<br>
+&nbsp;x = (48000000/(16+baud rate))-1<br>
+For example if the required baud rate is 19200<br>
+(48000000/(16*19200))-1 =&nbsp; 155.25 so we will use 155.<br>
+155 is 0x009B so we set the high byte to 0x00 and the low byte to 0x9B.<br>
+Here are some standard baud rates:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0">
+  <tr>
+    <td align="center">Baud Rate</td>
+    <td width="25%" align="center">Divisor</td>
+    <td width="25%" align="center">High Byte</td>
+    <td width="25%" align="center">Low Byte</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">300</td>
+    <td width="25%" align="center">9999</td>
+    <td width="25%" align="center">0x27</td>
+    <td width="25%" align="center">0x0F</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">1200</td>
+    <td width="25%" align="center">2499</td>
+    <td width="25%" align="center">0x09</td>
+    <td width="25%" align="center">0xC3</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">2400</td>
+    <td width="25%" align="center">1249</td>
+    <td width="25%" align="center">0x04</td>
+    <td width="25%" align="center">0xE1</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">9600</td>
+    <td width="25%" align="center">311</td>
+    <td width="25%" align="center">0x01</td>
+    <td width="25%" align="center">0x37</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">19.2k</td>
+    <td width="25%" align="center">155</td>
+    <td width="25%" align="center">0x00</td>
+    <td width="25%" align="center">0x9B</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">38.4k</td>
+    <td width="25%" align="center">77</td>
+    <td width="25%" align="center">0x00</td>
+    <td width="25%" align="center">0x4D</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">57.6k</td>
+    <td width="25%" align="center">51</td>
+    <td width="25%" align="center">0x00</td>
+    <td width="25%" align="center">0x33</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">115.2k</td>
+    <td width="25%" align="center">25</td>
+    <td width="25%" align="center">0x00</td>
+    <td width="25%" align="center">0x19</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">250k</td>
+    <td width="25%" align="center">11</td>
+    <td width="25%" align="center">0x00</td>
+    <td width="25%" align="center">0x0B</td>
+  </tr>
+  <tr>
+    <td width="25%" align="center">1M</td>
+    <td width="25%" align="center">3</td>
+    <td width="25%" align="center">0x00</td>
+    <td width="25%" align="center">0x03</td>
+  </tr>
+</table>
+<p align="left">The serial mode is compatible with both 1 and 2 stop bit formats
+because is transmits 2 stop bits and only needs to receive 1. There is no
+parity.</p>
+<p align="left"><b>IO_CHANGE</b><br>
+Not really an operating mode. It's used to change
+the I/O mode between Analogue Input, Digital Input and digital Output without
+changing Serial or I2C settings. It only needs to be used when you are using
+Serial or I2C modes and you want to change the I/O pins. The format is:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" width="586">
+  <tr>
+    <td width="100" align="center">ISS_CMD</td>
+    <td width="100" align="center">ISS_MODE</td>
+    <td width="100" align="center">IO_MODE</td>
+    <td width="300" align="center">IO_TYPE (see example above)</td>
+  </tr>
+  <tr>
+    <td width="100" align="center">0x5A</td>
+    <td width="100" align="center">0x02</td>
+    <td width="100" align="center">0x10</td>
+    <td width="274" align="center">0xB4</td>
+  </tr>
+</table>
+<p align="left">
+In all mode setting commands, two bytes are returned. See <a href="#Response Bytes">Response
+Bytes</a> below.</p>
+<p align="left"><b>I2C Modes</b><br>
+There are 7 I2C commands as detailed above. They differ only in the SCL
+frequency and whether they use a software bit bashed driver or the I2C hardware
+in the PIC chip.<br>
+The I2C command on its own will have I/O on pins I/O1 and I/O2. This is a 4 byte
+setup command.
+</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" width="573">
+  <tr>
+    <td width="100" align="center">ISS_CMD</td>
+    <td width="100" align="center">ISS_MODE</td>
+    <td width="100" align="center">I2C_MODE</td>
+    <td width="300" align="center">IO_TYPE (see I/O mode above)</td>
+  </tr>
+  <tr>
+    <td width="100" align="center">0x5A</td>
+    <td width="100" align="center">0x02</td>
+    <td width="100" align="center">0x60</td>
+    <td width="300" align="center">0x04</td>
+  </tr>
+</table>
+<p align="left">This example will initialize I2C to 100khz using the hardware
+I2C peripheral in the PIC chip.</p>
+<p align="left">The I2C commands may be combined with SERIAL mode.<br>
+When combined with SERIAL, I/O1 is the Rx pin and I/O2 is the Tx pin. This is a
+5 byte setup command.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" width="666">
+  <tr>
+    <td align="center">ISS_CMD</td>
+    <td align="center">ISS_MODE</td>
+    <td align="center">I2C_MODE+SERIAL</td>
+    <td align="center">Baud rate divisor (high byte)</td>
+    <td align="center">Baud rate divisor (low byte)</td>
+  </tr>
+  <tr>
+    <td align="center">0x5A</td>
+    <td align="center">0x02</td>
+    <td align="center">0x71</td>
+    <td align="center">0x00</td>
+    <td align="center">0x9B</td>
+  </tr>
+</table>
+<p align="left">The formula for calculating the baud rate is the same as for I/O+Serial
+above.<br>
+<br>
+In all mode setting commands two bytes are returned. See <a href="#Response Bytes">Response
+Bytes</a> below.</p>
+<p align="left"><b>SPI Mode</b><br>
+This mode requires all four I/O pins, so cannot be combined with serial, I2C or
+I/O. Refer to the connection diagram above for pin-outs. SPI mode is capable of
+operating in all four possible clock phases. SPI_MODE command (0x90) may
+combined with the phase selection bits.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">SPI_MODE</td>
+    <td align="center">Phase&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center">0x90</td>
+    <td align="center">Tx on transition from active to Idle clock, Idle state for clock is low level</td>
+  </tr>
+  <tr>
+    <td align="center">0x91</td>
+    <td align="center">Tx on transition from active to Idle clock, Idle state for clock is high level</td>
+  </tr>
+  <tr>
+    <td align="center">0x92</td>
+    <td align="center">Tx on transition from Idle to active clock, Idle state for clock is low level</td>
+  </tr>
+  <tr>
+    <td align="center">0x93</td>
+    <td align="center">Tx on transition from Idle to active clock, Idle state for clock is high level</td>
+  </tr>
+</table>
+<p align="left">0x90 is the standard mode, use this with SPI SRAM, EEPROM's etc.<br>
+Setting SPI mode is a 4 byte command:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" width="666">
+  <tr>
+    <td align="center">ISS_CMD</td>
+    <td align="center">ISS_MODE</td>
+    <td align="center">SPI_MODE</td>
+    <td align="center">SCK divisor</td>
+  </tr>
+  <tr>
+    <td align="center">0x5A</td>
+    <td align="center">0x02</td>
+    <td align="center">0x90</td>
+    <td align="center">0x01</td>
+  </tr>
+</table>
+<p align="left">The SCK divisor sets the SPI clock speed. The formula is:<br>
+Divisor = (6000000/SCK)-1<br>
+For a 3Mhz SCK, divisor&nbsp; =&nbsp; (6000000/3000000)-1 = 1<br>
+For 500khz SCK, divisor = (6000000/500000)-1 = 11<br>
+The maximum divisor of 255 gives the slowest SCK of just 23.44khz.&nbsp;<br>
+A minimum of 0x01 should be set for the divisor, if you set 0x00 it will be the
+same as 0x01.</p>
+<p align="left">In all mode setting commands, two bytes are returned. See <a href="#Response Bytes">Response
+Bytes</a> below.</p>
+<p align="left"><b><a name="Response Bytes">Response Bytes</a></b><br>
+The response to the mode setting frames is always two bytes.<br>
+The first byte is ACKnowledge (0xFF) or NotACKnowledge (0x00).<br>
+If you get an ACK then the second byte will be just 0x00.<br>
+If you get a NACK then the second byte will be the reason, as follows:<br>
+0x05 Unknown Command&nbsp;<br>
+0x06 Internal Error 1&nbsp;&nbsp; }<br>
+0x07 Internal Error 2&nbsp;&nbsp; } you should never see these</p>
+<p align="left">Under normal circumstances the response will be 0xFF, 0x00</p>
+<table border="0" cellspacing="0" cellpadding="3">
+  <tr>
+    <td colspan="5"><b>Further Technical Pages</b></td>
+  </tr>
+  <tr>
+    <td><a href="usb_iss_i2c_tech.html">I2C</a></td>
+    <td><a href="usb_iss_spi_tech.html">SPI</a></td>
+    <td><a href="usb_iss_serial_tech.html">Serial</a></td>
+    <td><a href="usb_iss_io_tech.html">I/O</a></td>
+    <td><a href="http://www.robot-electronics.co.uk/htm/usb_iss_boot.htm">Boot-Loader</a></td>
+  </tr>
+</table>
+<p><b>Testing the USB-ISS</b><br>
+We have a small test program which will let you try out the different operating
+modes of the USB-ISS module. It is written in Visual C# 2010 version.</p>
+<table border="0">
+  <tr>
+    <td><img border="0" src="./img/usbiss-i2c.png" width="300" height="235"></td>
+    <td width="400">Left<br>
+      Image show test of Hardware I2C at 400khz with I/O. It is writing and
+      reading a four byte (32 bit) integer. The I/O has been set to analogue and
+      the measured values are displayed.
+      <p>&nbsp;</p>
+      <p align="right">Right<br>
+      Here we are writing and reading to an SPI RAM.</td>
+    <td><img border="0" src="./img/usbiss-spi.png" width="300" height="235"></td>
+  </tr>
+</table>
+<p>You can download just the <a href="http://www.robot-electronics.co.uk/files/usbiss.zip">executable files</a>
+or the <a href="http://www.robot-electronics.co.uk/files/USB-ISS%20Test.zip">full source code</a>.</p>
+<p align="left"><b>Dimensions</b></p>
+<p align="center"><img border="0" src="./img/usb-iss-mech.png" width="415" height="293"></p>
+<p align="left">&nbsp;</p>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<html>
+
+<head>
+<title>USB-ISS Communications Module</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<p align="center"><b><font size="5">USB-ISS&nbsp; Multifunction USB Communications Module</font><font size="3"><br>
+I/O Mode - Technical Specification</font></b></p>
+
+<p align="left">The are three commands for I/O operations. These are:</p>
+
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="right">SETPINS</td>
+    <td>0x63</td>
+    <td>Used to set output pins high or low</td>
+  </tr>
+  <tr>
+    <td align="right">GETPINS</td>
+    <td>0x64</td>
+    <td>Returns the state of all input and output pins</td>
+  </tr>
+  <tr>
+    <td align="right">GETAD</td>
+    <td>0x65</td>
+    <td>Returns the analogue value on the pin.</td>
+  </tr>
+</table>
+<p align="left"><b>SETPINS</b><br>
+The SETPINS command only operates on pins that have been set as output pins.
+Digital or analogue input pins, or pins that are used for I2C or serial are not
+affected. The command is:</p>
+
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">SETPINS command (0x63)</td>
+    <td align="center"> Pin States</td>
+  </tr>
+</table>
+<p>Bits within the Pin States byte define which pins are high or low as follows:<br>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center" width="30">7</td>
+    <td align="center" width="30">6</td>
+    <td align="center" width="30">5</td>
+    <td align="center" width="30">4</td>
+    <td align="center" width="30">3</td>
+    <td align="center" width="30">2</td>
+    <td align="center" width="30">1</td>
+    <td align="center" width="30">0</td>
+  </tr>
+  <tr>
+    <td align="center" width="30">x</td>
+    <td align="center" width="30">x</td>
+    <td align="center" width="30">x</td>
+    <td align="center" width="30">x</td>
+    <td align="center" width="30">I/O4</td>
+    <td align="center" width="30">I/O3</td>
+    <td align="center" width="30">I/O2</td>
+    <td align="center" width="30">I/O1</td>
+  </tr>
+</table>
+<p align="left">&nbsp;The response is single byte containing ACK (0xFF) if the
+command was successful or NACK (0x00) if it failed.&nbsp;</p>
+
+<p align="left"><b>GETPINS</b><br>
+This is used to get the current state of all digital I/O pins.<br>
+Just send the single byte:</p>
+
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">GETPINS command (0x64)</td>
+  </tr>
+</table>
+<p align="left">The response is a single byte indicating the Pin States as
+defined above.</p>
+
+<p align="left"><b>GETAD</b><br>
+This is a two byte command.</p>
+
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">GETAD command (0x65)</td>
+    <td align="center"> Channel (1-4)</td>
+  </tr>
+</table>
+
+<p align="left">The GETAD command will convert the requested channel (I/O pin
+number) and return the two byte result. The result is the high byte and low byte
+of a 16-bit number.</p>
+
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">Result High Byte</td>
+    <td align="center"> Result Low Byte</td>
+  </tr>
+</table>
+
+<p align="left">The A/D conversion is a 10-bit conversion so the range is 0-1023
+for a voltage swing of Vss to Vcc on the pin. <br>
+For example if you get a reading of 678, this is 0x02A6 in hex. So the high byte
+would be 0x02 and the low byte would be 0xA6.<br>
+And if the result is 0x00, 0x3D, then this is 0x003D or 61 in decimal.</p>
+
+<p align="left">If you try to convert a channel which is not setup as an
+analogue pin or the channel is outside the range 1-4 then the result will be 0x0000.</p>
+
+</body>
+
+</html>

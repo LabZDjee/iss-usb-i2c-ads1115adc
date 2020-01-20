@@ -1,0 +1,68 @@
+<html>
+
+<head>
+<title>USB-ISS Communications Module</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<p align="center"><b><font size="5">USB-ISS&nbsp; Multifunction USB Communications Module</font><font size="3"><br>
+Serial Mode - Technical Specification</font></b></p>
+
+<p align="left"><br>
+The USB-ISS has a 30 byte data buffer for serial transmit and a 62 byte buffer for
+serial&nbsp;receive.<br>
+The command format is:</p>
+
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">SERIAL_IO command (0x62)</td>
+    <td align="center"> TxData1</td>
+    <td align="center"> TxData2</td>
+    <td align="center"> TxData3</td>
+    <td align="center"> TxData4</td>
+    <td align="center"> ...</td>
+    <td align="center"> TxData n</td>
+  </tr>
+</table>
+<p>
+Characters sent for transmission are buffered and sent as soon as possible. The
+command does not wait for the characters to be transmitted before
+responding.&nbsp;<br>
+The response&nbsp; frame is:<br>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">ACK (0xFF) or NACK (0x00)</td>
+    <td align="center">TxCount</td>
+    <td align="center">RxCount</td>
+    <td align="center">RxData1</td>
+    <td align="center">RxData2</td>
+    <td align="center">...</td>
+    <td align="center">RxData n</td>
+  </tr>
+</table>
+<p align="left">&nbsp;The only reason you will ever get a NACK is if the buffer
+does not have enough room for the transmit characters. You must wait until there
+is room in the buffer and then send them again, or better still check there is
+room in the buffer before you send them. The next two bytes are the
+number of characters remaining in the transmit buffer (TxCount) and the number
+of receive characters that follow (RxCount). You should always read these three
+bytes first. You should next examine the RxCount byte and receive that number of
+characters. If the RxCount byte is zero then there are no further characters to
+receive.</p>
+
+<p align="left">It is valid to send the SERIAL_IO command (0x62) on its own,
+without any Tx characters. That is how you will check for any received
+characters if you have nothing to transmit. You will get the same response frame
+as above.</p>
+
+<p align="left">&nbsp;<br>
+</p>
+
+<p align="left">&nbsp;</p>
+
+<p align="left">&nbsp;</p>
+
+</body>
+
+</html>

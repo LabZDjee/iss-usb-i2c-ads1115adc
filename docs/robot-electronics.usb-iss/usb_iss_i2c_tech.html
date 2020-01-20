@@ -1,0 +1,597 @@
+<html>
+
+<head>
+<title>USB-ISS Communications Module</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<p align="center"><b><font size="5">USB-ISS&nbsp; Multifunction USB Communications Module</font><font size="3"><br>
+I2C Mode - Technical Specification</font></b></p>
+
+<p align="left"><br>
+The USB-ISS always operates as an I2C bus master.<br>
+I2C mode has a number of commands for accessing I2C devices with 0, 1 or 2
+internal address bytes, and for building your own custom I2C sequences. These
+are:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">Command</td>
+    <td align="center">Value</td>
+    <td align="center">Description</td>
+  </tr>
+  <tr>
+    <td align="center"> I2C_SGL</td>
+    <td align="center">0x53</td>
+    <td align="center"> Read/Write single byte for non-registered devices, such as
+      the Philips PCF8574 I/O chip.</td>
+  </tr>
+  <tr>
+    <td align="center"> I2C_AD0</td>
+    <td align="center">0x54</td>
+    <td align="center">Read/Write multiple bytes for devices without
+      internal address or where address does not require resetting.</td>
+  </tr>
+  <tr>
+    <td align="center"> I2C_AD1</td>
+    <td align="center">0x55</td>
+    <td align="center"> Read/Write 1 byte addressed devices
+      (the majority of devices will use this one)</td>
+  </tr>
+  <tr>
+    <td align="center"> I2C_AD2</td>
+    <td align="center">0x56</td>
+    <td align="center"> Read/Write 2 byte addressed devices,
+      eeproms from 32kbit (4kx8) and up.&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center"> I2C_DIRECT</td>
+    <td align="center">0x57</td>
+    <td align="center"> Used to build your own custom I2C sequences.</td>
+  </tr>
+  <tr>
+    <td align="center"> I2C_TEST</td>
+    <td align="center">0x58</td>
+    <td align="center"> Used to check for the existence of an I2C device on the
+      bus. (V5 or later firmware only)</td>
+  </tr>
+</table>
+<p align="left">The USB-ISS module takes care of all the I2C bus requirements
+such as start/restart/stop sequencing and handles the acknowledge cycles. You
+only need supply a string of bytes to tell the module what to do.&nbsp;</p>
+<p align="left"><b>Writing a single byte to I2C devices without internally addressable
+registers</b><br>
+These include devices such as the Philips PCF8574 I/O expander. Following the
+I2C_SGL you send the devices I2C address and the data byte.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="right" bgcolor="#CCCCCC">&nbsp;</td>
+    <td align="center" bgcolor="#CCCCCC">Primary USB-ISS command</td>
+    <td align="center" bgcolor="#CCCCCC">Device Address + R/W bit</td>
+    <td align="center" bgcolor="#CCCCCC">The data byte</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCCCCC">Byte Type</td>
+    <td align="center" bgcolor="#CCCCCC">I2C_SGL</td>
+    <td align="center" bgcolor="#CCCCCC">Addr+R/W</td>
+    <td align="center" bgcolor="#CCCCCC">Data</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCCCCC">Example</td>
+    <td align="center" bgcolor="#CCCCCC">0x53</td>
+    <td align="center" bgcolor="#CCCCCC">0x40</td>
+    <td align="center" bgcolor="#CCCCCC">0x00</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCCCCC">Meaning</td>
+    <td align="center" bgcolor="#CCCCCC">Direct Read/Write command</td>
+    <td align="center" bgcolor="#CCCCCC">PCF8574 I2C address</td>
+    <td align="center" bgcolor="#CCCCCC">Set all bits low</td>
+  </tr>
+</table>
+<p align="left">This 3 byte sequence sets all bits of a PCF8574 I/O expander
+chip low.
+All 3 bytes should be sent to the USB-ISS in one sequence. A gap will result in the
+USB-ISS re-starting its internal command synchronization loop and ignoring the
+message. After all bytes have been received the USB-ISS performs the IC2 write
+operation out to the PCF8574 and sends a single byte back to the PC. This returned
+byte will be 0x00 (zero) if the write command failed and non-zero if the write
+succeeded. The PC should wait for this byte to be returned (timing out after
+500mS) before proceeding with the next transaction.<br>
+<b><br>
+Reading a single byte from I2C devices without internally addressable registers</b><br>
+This is similar to writing, except that you should add 1 to the device address
+to make it an odd number. To read from a PCF8574 at address 0x40, you would use
+0x41 as the address. (When the address goes out on the I2C bus, its the 1 in the
+lowest bit position that indicates a read cycle is happening). Here is an
+example of reading the inputs on a PCF8574 I/O expander:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center" bgcolor="#CCCCCC">I2C_SGL</td>
+    <td align="center" bgcolor="#CCCCCC">PCF8574 I2C address + Read bit</td>
+  </tr>
+  <tr>
+    <td align="center" bgcolor="#CCCCCC">0x53</td>
+    <td align="center" bgcolor="#CCCCCC">0x41</td>
+  </tr>
+</table>
+<p align="left">The USB-ISS module will perform the read operation on the I2C bus and send
+a single byte (the PCF8574 inputs) back to the PC. The PC should wait for the
+byte to
+be returned (timing out after 500mS) before proceeding with the next
+transaction.</p>
+<p align="left"><b>Writing multiple bytes to devices that do not have an
+internal&nbsp; address register.<br>
+</b>There are very few, if any, real devices that operate this way, however some
+people have programmed uControllers to work like this. Here is an example of
+sending four bytes to a device at I2C address 0x30.</p>
+<table border="1" bgcolor="#CCFF99" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">I2C_AD0</td>
+    <td align="center">Device I2C address + Write bit</td>
+    <td align="center">Number of bytes to write</td>
+    <td align="center">Data 1</td>
+    <td align="center">Data 2</td>
+    <td align="center">Data 3</td>
+    <td align="center">Data 4</td>
+  </tr>
+  <tr>
+    <td align="center">0x54</td>
+    <td align="center">0x30</td>
+    <td align="center">0x04</td>
+    <td align="center">0x12</td>
+    <td align="center">0x34</td>
+    <td align="center">0x56</td>
+    <td align="center">0x78</td>
+  </tr>
+</table>
+<p align="left"> After all bytes have been received the USB-ISS performs the IC2 write
+operation on the I2C bus and sends a single byte back to the PC. This returned
+byte will be 0x00 (zero) if the write command failed and non-zero if the write
+succeeded. The PC should wait for this byte to be returned (timing out after
+500mS) before proceeding with the next transaction.</p>
+<p align="left"><b>Reading multiple bytes from I2C devices without setting a new
+address</b><br>
+This is used for devices that do not have an internal register address but
+returns multiple bytes. Examples of such devices are the Honeywell ASDX DO
+series pressure sensors. This command&nbsp; can also be used for devices that do
+have an internal address which it increments automatically between reads and
+doesn't need to be set each time, such as eeproms. In this case you would use
+command I2C_AD1 or I2C_AD2 for the first read, then I2C_AD0 for subsequent
+reads. Here is an
+example of reading the two byte pressure from the Honeywell sensor.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center" bgcolor="#CCFF99">I2C_AD0</td>
+    <td align="center" bgcolor="#CCFF99">ASDX I2C address + Read bit</td>
+    <td align="center" bgcolor="#CCFF99">Number of bytes to read</td>
+  </tr>
+  <tr>
+    <td align="center" bgcolor="#CCFF99">0x54</td>
+    <td align="center" bgcolor="#CCFF99">0xF1</td>
+    <td align="center" bgcolor="#CCFF99">0x02</td>
+  </tr>
+</table>
+<p align="left">The USB-ISS will perform the read operation on the I2C bus and send
+two bytes back to the PC - high byte first in this example for the ASDX sensor. The PC should wait for both bytes to
+be returned (timing out after 500mS) before proceeding with the next
+transaction.</p>
+<p align="left"><b>Writing to I2C devices with a 1 byte internal address
+register</b><br>
+This includes almost all I2C devices. Following the I2C_AD1 command you send the device
+I2C address, then the devices internal register
+address you want to write to and the number of bytes you're writing.&nbsp;The
+maximum number of data bytes should not exceed 60 so as not to overflow the USB-ISS's internal buffer.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="right" bgcolor="#CCFFFF">&nbsp;</td>
+    <td align="center" bgcolor="#CCFFFF">Primary USB-ISS command</td>
+    <td align="center" bgcolor="#CCFFFF">Device Address + R/W bit</td>
+    <td align="center" bgcolor="#CCFFFF">Device internal register</td>
+    <td align="center" bgcolor="#CCFFFF">Number of data bytes</td>
+    <td align="center" bgcolor="#CCFFFF">The data bytes</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCFFFF">Byte Type</td>
+    <td align="center" bgcolor="#CCFFFF">I2C_AD1</td>
+    <td align="center" bgcolor="#CCFFFF">Addr+R/W</td>
+    <td align="center" bgcolor="#CCFFFF">Reg</td>
+    <td align="center" bgcolor="#CCFFFF">Byte Count</td>
+    <td align="center" bgcolor="#CCFFFF">Data</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCFFFF">Example</td>
+    <td align="center" bgcolor="#CCFFFF">0x55</td>
+    <td align="center" bgcolor="#CCFFFF">0xE0</td>
+    <td align="center" bgcolor="#CCFFFF">0x00</td>
+    <td align="center" bgcolor="#CCFFFF">0x01</td>
+    <td align="center" bgcolor="#CCFFFF">0x51</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCFFFF">Meaning</td>
+    <td align="center" bgcolor="#CCFFFF">Primary USB-ISS command</td>
+    <td align="center" bgcolor="#CCFFFF">SRF08 I2C address</td>
+    <td align="center" bgcolor="#CCFFFF">SRF08 command Reg</td>
+    <td align="center" bgcolor="#CCFFFF">One command byte follows</td>
+    <td align="center" bgcolor="#CCFFFF">Start ranging in cm</td>
+  </tr>
+</table>
+<p align="left">This 5 byte sequence starts an SRF08 at address 0xE0 ranging.
+All 5 bytes should be sent to the USB-ISS in one sequence. A gap will result in the
+USB-ISS re-starting its internal command synchronization loop and ignoring the
+message. After all bytes have been received the USB-ISS performs the IC2 write
+operation out to the SRF08 and sends a single byte back to the PC. This returned
+byte will be 0x00 (zero) if the write command failed and non-zero if the write
+succeeded. The PC should wait for this byte to be returned (timing out after
+500mS) before proceeding with the next transaction.<br>
+Here is another write example - this time an 8 byte sequence to initialize the
+MD22 motor driver:&nbsp;</p>
+<table border="1" cellspacing="0" cellpadding="3" bgcolor="#FFFFCC">
+  <tr>
+    <td bgcolor="#CCFFFF">
+      <p align="center">I2C_AD1</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">MD22 Addr+R/W</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">Mode Reg</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">Data byte count</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">MD22 mode 1</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">Left Motor Stopped</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">Right Motor Stopped</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">Fast acceleration</td>
+  </tr>
+  <tr>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x55</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0xB0</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x00</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x04</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x01</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x00</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x00</td>
+    <td bgcolor="#CCFFFF">
+      <p align="center">0x02</td>
+  </tr>
+</table>
+<p align="left">Again the USB-ISS will respond with non-zero if the write succeeded
+and zero if it failed. A failure means that no acknowledge was received from the
+I2C device.</p>
+<p align="left"><b>Reading from I2C devices with a 1 byte&nbsp; internal address
+register</b><br>
+This is similar to writing, except that you should add 1 to the device address
+to make it an odd number. To read from an SRF08 at address 0xE0, you would use
+0xE1 as the address. (When the address goes out on the I2C bus, its the 1 in the
+lowest bit position that indicates a read cycle is happening). The maximum
+number of data bytes requested should not exceed 60 so as not to overflow the USB-ISS's internal buffer. Here is an
+example of reading the two byte bearing from the CMPS03 compass module:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center" bgcolor="#CCFFFF">I2C_AD1</td>
+    <td align="center" bgcolor="#CCFFFF">CPMS03 I2C address + Read bit</td>
+    <td align="center" bgcolor="#CCFFFF">CMPS03 bearing register</td>
+    <td align="center" bgcolor="#CCFFFF">Number of bytes to read</td>
+  </tr>
+  <tr>
+    <td align="center" bgcolor="#CCFFFF">0x55</td>
+    <td align="center" bgcolor="#CCFFFF">0xC1</td>
+    <td align="center" bgcolor="#CCFFFF">0x02</td>
+    <td align="center" bgcolor="#CCFFFF">0x02</td>
+  </tr>
+</table>
+<p align="left">The USB-ISS will perform the read operation on the I2C bus and send
+two bytes back to the PC - high byte first. The PC should wait for both bytes to
+be returned (timing out after 500mS) before proceeding with the next
+transaction.</p>
+<p align="left"><b>Writing to I2C devices with a 2 byte internal address
+register</b><br>
+This is primarily for eeprom's from 24LC32 (4k x 8) to 24LC1024 (2 * 64k x 8). Following the
+I2C_AD2 you send the device
+I2C address, then the devices internal register
+address (2 bytes, high byte first for eeprom's) and then the number of bytes you're writing.&nbsp;The
+maximum number of data bytes should not exceed 59 so as not to overflow the USB-ISS's
+64 byte internal buffer.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="right" bgcolor="#CCCCFF">&nbsp;</td>
+    <td align="center" bgcolor="#CCCCFF">Primary USB-ISS command</td>
+    <td align="center" bgcolor="#CCCCFF">Device Address + R/W bit</td>
+    <td align="center" bgcolor="#CCCCFF">High byte of internal
+      Address</td>
+    <td align="center" bgcolor="#CCCCFF">Low byte of internal
+      Address</td>
+    <td align="center" bgcolor="#CCCCFF">Number of data bytes</td>
+    <td align="center" bgcolor="#CCCCFF">The data bytes</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCCCFF">Byte Type</td>
+    <td align="center" bgcolor="#CCCCFF">I2C_AD2</td>
+    <td align="center" bgcolor="#CCCCFF">Addr+R/W</td>
+    <td align="center" bgcolor="#CCCCFF">Address High</td>
+    <td align="center" bgcolor="#CCCCFF">Address Low</td>
+    <td align="center" bgcolor="#CCCCFF">Byte Count</td>
+    <td align="center" bgcolor="#CCCCFF">Data</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCCCFF">Example</td>
+    <td align="center" bgcolor="#CCCCFF">0x56</td>
+    <td align="center" bgcolor="#CCCCFF">0xA0</td>
+    <td align="center" bgcolor="#CCCCFF">0x00</td>
+    <td align="center" bgcolor="#CCCCFF">0x00</td>
+    <td align="center" bgcolor="#CCCCFF">0x20</td>
+    <td align="center" bgcolor="#CCCCFF">0xnn</td>
+  </tr>
+  <tr>
+    <td align="right" bgcolor="#CCCCFF">Meaning</td>
+    <td align="center" bgcolor="#CCCCFF">Primary USB-ISS command</td>
+    <td align="center" bgcolor="#CCCCFF">24LC32 I2C address</td>
+    <td align="center" bgcolor="#CCCCFF">Address 0x0000</td>
+    <td align="center" bgcolor="#CCCCFF">Address 0x0000</td>
+    <td align="center" bgcolor="#CCCCFF">One command byte follows</td>
+    <td align="center" bgcolor="#CCCCFF">32 (0x20) data bytes</td>
+  </tr>
+</table>
+<p align="left">This 37 byte sequence writes the last 32 bytes to address 0x0000
+in the eeprom.
+All 37 bytes should be sent to the USB-ISS in one sequence. A gap will result in the
+USB-ISS re-starting its internal command synchronization loop and ignoring the
+message. After all bytes have been received the USB-ISS performs the IC2 write
+operation out to the eeprom and sends a single byte back to the PC. This returned
+byte will be 0x00 (zero) if the write command failed and non-zero if the write
+succeeded. The PC should wait for this byte to be returned (timing out after
+500mS) before proceeding with the next transaction.</p>
+<p align="left"><b>Reading from I2C devices with a 2 byte internal address
+register</b><br>
+This is similar to writing, except that you should add 1 to the device address
+to make it an odd number. To read from an eeprom at address 0xA0, you would use
+0xA1 as the address. (When the address goes out on the I2C bus, its the 1 in the
+lowest bit position that indicates a read cycle is happening). The maximum
+number of data bytes requested should not exceed 64 so as not to overflow the USB-ISS's internal buffer. Here is an
+example of reading 64 (0x40) bytes from internal address 0x0000 of an eeprom at
+I2C address 0xA0.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center" bgcolor="#CCCCFF">I2C_AD2</td>
+    <td align="center" bgcolor="#CCCCFF">Device I2C address + Read bit</td>
+    <td align="center" bgcolor="#CCCCFF">High byte of internal
+      Address</td>
+    <td align="center" bgcolor="#CCCCFF">Low byte of internal
+      Address</td>
+    <td align="center" bgcolor="#CCCCFF">Number of bytes to read</td>
+  </tr>
+  <tr>
+    <td align="center" bgcolor="#CCCCFF">0x56</td>
+    <td align="center" bgcolor="#CCCCFF">0xA1</td>
+    <td align="center" bgcolor="#CCCCFF">0x00</td>
+    <td align="center" bgcolor="#CCCCFF">0x00</td>
+    <td align="center" bgcolor="#CCCCFF">0x40</td>
+  </tr>
+</table>
+<p align="left">The USB-ISS will perform the read operation on the I2C bus and send
+64 bytes back to the PC. The PC should wait for all 64 bytes to
+be returned (timing out after 500mS) before proceeding with the next
+transaction.</p>
+<p align="left"><b>I2C_DIRECT commands</b><br>
+The I2C_DIRECT commands are used to build custom I2C sequences.&nbsp;<br>
+You send the
+I2C_DIRECT command (0x57) followed by as many sub-commands as required. These
+sub-commands are:</p>
+<table border="1" bgcolor="#FFCCCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">I2C Start</td>
+    <td align="center">0x01</td>
+    <td align="center">send start sequence</td>
+  </tr>
+  <tr>
+    <td align="center">I2C Restart</td>
+    <td align="center">0x02</td>
+    <td align="center">send restart sequence</td>
+  </tr>
+  <tr>
+    <td align="center">I2C Stop</td>
+    <td align="center">0x03</td>
+    <td align="center">send stop sequence</td>
+  </tr>
+  <tr>
+    <td align="center">I2C Nack</td>
+    <td align="center">0x04</td>
+    <td align="center">send NACK after next read</td>
+  </tr>
+  <tr>
+    <td align="center">I2C Read</td>
+    <td align="center">0x20 - 0x2F</td>
+    <td align="center">reads 1-16 bytes</td>
+  </tr>
+  <tr>
+    <td align="center">I2C Write</td>
+    <td align="center">0x30 - 0x3F</td>
+    <td align="center">writes next 1-16 bytes</td>
+  </tr>
+</table>
+<p>The I2C_Read sub-commands can read up to 16 bytes. 0x20 will read 1 byte,
+0x21 will read 2 bytes, 0x2F will read 16 bytes. All bytes read are buffered and
+sent after all sub-commands are processed.<br>
+The I2C_Write sub-commands can write up to 16 bytes. 0x30 will write 1 byte,
+0x35 will write 6 bytes, 0x3F will write 16 bytes. The bytes to be written
+immediately follow the write sub-command. It is up to you to make sure you
+supply the correct number of bytes as specified in the sub-command.</p>
+<p>Here is the sequence to write 0x55 to the PCF8574 I/O expander.</p>
+<table border="1" bgcolor="#FFCCCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">I2C_DIRECT</td>
+    <td align="center">I2C_START</td>
+    <td align="center">I2C_WRITE2</td>
+    <td align="center"> PCF8574 I2C write address</td>
+    <td align="center">Data</td>
+    <td align="center">I2C_STOP</td>
+  </tr>
+  <tr>
+    <td align="center">0x57</td>
+    <td align="center">0x01</td>
+    <td align="center">0x31</td>
+    <td align="center">0x40</td>
+    <td align="center">0x55</td>
+    <td align="center">0x03</td>
+  </tr>
+</table>
+<p>The following will write 4 bytes to a 24LC512 EEPROM. This uses 2 internal
+address bytes.</p>
+<table border="1" bgcolor="#FFCCCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">Direct</td>
+    <td align="center">Start</td>
+    <td align="center">Write7</td>
+    <td align="center">I2C Address</td>
+    <td align="center">Address High</td>
+    <td align="center">Address low</td>
+    <td align="center">Data1</td>
+    <td align="center">Data2</td>
+    <td align="center">Data3</td>
+    <td align="center">Data4</td>
+    <td align="center">Stop</td>
+  </tr>
+  <tr>
+    <td align="center">0x57</td>
+    <td align="center">0x01</td>
+    <td align="center">0x36</td>
+    <td align="center">0xA0</td>
+    <td align="center">0x00</td>
+    <td align="center">0x00</td>
+    <td align="center">0x11</td>
+    <td align="center">0x22</td>
+    <td align="center">0x33</td>
+    <td align="center">0x44</td>
+    <td align="center">0x03</td>
+  </tr>
+</table>
+<p>And this will read 4 bytes from a 24LC512 EEPROM.</p>
+<table border="1" bgcolor="#FFCCCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">Direct</td>
+    <td align="center">Start</td>
+    <td align="center">Write3</td>
+    <td align="center">I2C Address</td>
+    <td align="center">Address High</td>
+    <td align="center">Address low</td>
+    <td align="center">Restart</td>
+    <td align="center">Write1</td>
+    <td align="center">I2C address+RD</td>
+    <td align="center">Read3</td>
+    <td align="center">Nack</td>
+    <td align="center">Read1</td>
+    <td align="center">Stop</td>
+  </tr>
+  <tr>
+    <td align="center">0x57</td>
+    <td align="center">0x01</td>
+    <td align="center">0x32</td>
+    <td align="center">0xA0</td>
+    <td align="center">0x00</td>
+    <td align="center">0x00</td>
+    <td align="center">0x02</td>
+    <td align="center">0x30</td>
+    <td align="center">0xA1</td>
+    <td align="center">0x22</td>
+    <td align="center">0x04</td>
+    <td align="center">0x20</td>
+    <td align="center">0x03</td>
+  </tr>
+</table>
+<p>            Note that as part of the read sequence we first have to write the
+address that we want to read from. We read 3of the 4 bytes then set the NACK
+flag before reading the last byte. This is according to I2C specifications,
+however its not really necessary and the following will work just as well:</p>
+<table border="1" bgcolor="#FFCCCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center">Direct</td>
+    <td align="center">Start</td>
+    <td align="center">Write3</td>
+    <td align="center">I2C Address</td>
+    <td align="center">Address High</td>
+    <td align="center">Address low</td>
+    <td align="center">Restart</td>
+    <td align="center">Write1</td>
+    <td align="center">I2C address+RD</td>
+    <td align="center">Read4</td>
+    <td align="center">Stop</td>
+  </tr>
+  <tr>
+    <td align="center">0x57</td>
+    <td align="center">0x01</td>
+    <td align="center">0x32</td>
+    <td align="center">0xA0</td>
+    <td align="center">0x00</td>
+    <td align="center">0x00</td>
+    <td align="center">0x02</td>
+    <td align="center">0x30</td>
+    <td align="center">0xA1</td>
+    <td align="center">0x23</td>
+    <td align="center">0x03</td>
+  </tr>
+</table>
+<p>            The response to the I2C_DIRECT command is a variable number of
+bytes, but it will always be at least two. You should read these two bytes first
+as they are the status bytes. The fist byte is the ACK (0xFF) or NACK (0x00)
+status.<br>
+If you get an ACK the command was successful and the second byte contains the
+number of bytes to read. If you have not requested any reads then it will be
+zero, otherwise you should now read the number of bytes available.<br>
+If you get a NACK the command failed and the second byte contains the reason, as
+follows:</p>
+<table border="1" bgcolor="#FFCCCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center"><b>Error Type</b></td>
+    <td align="center"><b>Error Code</b></td>
+    <td align="center"><b>Comment</b></td>
+  </tr>
+  <tr>
+    <td align="center">Device Error</td>
+    <td align="center">0x01</td>
+    <td align="center">No ACK from device</td>
+  </tr>
+  <tr>
+    <td align="center">Buffer Overflow</td>
+    <td align="center">0x02</td>
+    <td align="center">You must limit the frame to &lt; 60 bytes</td>
+  </tr>
+  <tr>
+    <td align="center">Buffer Underflow</td>
+    <td align="center">0x03</td>
+    <td align="center">More write data was expected than sent</td>
+  </tr>
+  <tr>
+    <td align="center">Unknown command</td>
+    <td align="center">0x04</td>
+    <td align="center">Probably your write count is wrong</td>
+  </tr>
+</table>
+<p align="left">&nbsp;</p>
+<p align="left"><b>Checking for the existence of an I2C device </b>(V5 and later
+firmware only)</p>
+<table border="1" cellspacing="0">
+  <tr>
+    <td align="center" bgcolor="#99FFCC">I2C_TEST</td>
+    <td align="center" bgcolor="#99FFCC">Device I2C Address</td>
+  </tr>
+  <tr>
+    <td align="center" bgcolor="#99FFCC">0x58</td>
+    <td align="center" bgcolor="#99FFCC">0xA0</td>
+  </tr>
+</table>
+<p align="left">This 2 byte command was added to V5 following customer requests.
+It checks for the ACK response to a devices address. A single byte is returned,
+zero if no device is detected or non-zero if the device was detected.</p>
+<p>            &nbsp;</p>
+</body>
+
+</html>

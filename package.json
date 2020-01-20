@@ -1,0 +1,19 @@
+{
+  "name": "ser-i2c-can",
+  "version": "1.0.0",
+  "description": "Node to test a serial-I2c-chain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "G. Gauthier",
+  "license": "ISC",
+  "dependencies": {
+    "@labzdjee/ads1115-config": "^1.4.10",
+    "ansi-escapes": "^4.3.0",
+    "ansi-styles": "^4.2.1",
+    "pad": "^3.2.0",
+    "serialport": "^7.1.5",
+    "tiny-queue": "^0.2.1"
+  }
+}

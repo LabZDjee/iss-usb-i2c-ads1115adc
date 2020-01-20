@@ -1,0 +1,124 @@
+<html>
+
+<head>
+<title>USB-ISS Communications Module</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<p align="center"><b><font size="5">USB-ISS&nbsp; Multifunction USB Communications Module</font><font size="3"><br>
+SPI Mode - Technical Specification</font></b></p>
+
+<p align="left">In SPI mode the USB-ISS is always the master and supplies the
+SCK signal, and always returns the same number of bytes as you send.<br>
+The format is simple:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center"> Send</td>
+    <td align="center">SPI command (0x61)</td>
+    <td align="center"> TxData1</td>
+    <td align="center"> TxData2</td>
+    <td align="center"> TxData3</td>
+    <td align="center"> ...</td>
+    <td align="center"> TxData n</td>
+  </tr>
+  <tr>
+    <td align="center"> Receive</td>
+    <td align="center">ACK (0xFF) or NACK (0x00)</td>
+    <td align="center">RxData1</td>
+    <td align="center">RxData2</td>
+    <td align="center">RxData3</td>
+    <td align="center">...</td>
+    <td align="center">RxData n</td>
+  </tr>
+</table>
+<p align="left">
+All bytes should be sent to the USB-ISS in one sequence. A gap will result in the
+USB-ISS re-starting its internal command synchronization loop and ignoring the
+message. The maximum frame length including the command is 63 bytes.</p>
+<p align="left">Here is an example of using SPI mode to communicate with
+Microchip's SPI SRAM, the 23k256.&nbsp;<br>
+ Make sure you have the power link removed so
+you are working at 3.3v, as the 23k256 does not work at 5v.</p>
+<p align="left">The power up default of the 23k256 is byte mode. Here we will
+change this to sequential mode so any number of bytes can be read/written in the
+same frame. To do that we write to the status register. The command is:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center"> Send</td>
+    <td align="center">SPI command (0x61)</td>
+    <td align="center"> 0x01</td>
+    <td align="center"> 0x41</td>
+  </tr>
+  <tr>
+    <td align="center"> Receive</td>
+    <td align="center">ACK (0xFF) or NACK (0x00)</td>
+    <td align="center">0xnn</td>
+    <td align="center">&nbsp;0xnn</td>
+  </tr>
+</table>
+<p align="left">This is a 3 byte command. The 0x01 is the 23k256's &quot;write
+status register&quot; command. 0x41 is the new status register value. It puts
+the device into sequential mode and disables the hold. You must read back the
+same number of bytes as you send, in this case three. Only the first byte
+contains useful information. 0xnn are &quot;don't care&quot; bytes.</p>
+<p align="left">Next we will write four bytes to the SRAM.</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center"> Send</td>
+    <td align="center">SPI command (0x61)</td>
+    <td align="center"> 0x02</td>
+    <td align="center"> 0x00</td>
+    <td align="center"> 0x00</td>
+    <td align="center"> 0x12</td>
+    <td align="center"> 0x34</td>
+    <td align="center"> 0x56</td>
+    <td align="center"> 0x78</td>
+  </tr>
+  <tr>
+    <td align="center"> Receive</td>
+    <td align="center">ACK (0xFF) or NACK (0x00)</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">&nbsp;0xnn</td>
+  </tr>
+</table>
+<p align="left">Here we follow the SPI command with 0x02 which is the 23k256's
+write command. The next two 0x00's are the address high and address low of the
+SRAM address. These are followed by the four data bytes, in this case 0x12,
+0x34, 0x56, 0x78.</p>
+<p align="left">To read back the same bytes you would do this:</p>
+<table border="1" bgcolor="#FFFFCC" cellspacing="0" cellpadding="3">
+  <tr>
+    <td align="center"> Send</td>
+    <td align="center">SPI command (0x61)</td>
+    <td align="center"> 0x03</td>
+    <td align="center"> 0x00</td>
+    <td align="center"> 0x00</td>
+    <td align="center"> 0xnn</td>
+    <td align="center"> 0xnn</td>
+    <td align="center"> 0xnn</td>
+    <td align="center"> 0xnn</td>
+  </tr>
+  <tr>
+    <td align="center"> Receive</td>
+    <td align="center">ACK (0xFF) or NACK (0x00)</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">0xnn</td>
+    <td align="center">0x12</td>
+    <td align="center">0x34</td>
+    <td align="center">0x56</td>
+    <td align="center">&nbsp;0x78</td>
+  </tr>
+</table>
+<p align="left">The 0x03 is the 23k256's read command followed by the address
+(0x0000).
+We can then send any four bytes to clock the data out of the SRAM.</p>
+</body>
+
+</html>
