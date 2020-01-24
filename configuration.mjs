@@ -1,13 +1,14 @@
 /* jshint esversion: 6 */
 
-import {
-  configReg as adsConfigReg
-} from "@labzdjee/ads1115-config";
+import { configReg as adsConfigReg } from "@labzdjee/ads1115-config";
 
-const AnixCfgs = [{
+const recurrenceInMs = 500;
+
+const AnixCfgs = [
+  {
     profile: 4,
     gains: ["4.096", "4.096", "4.096", "4.096"],
-    iirTakeIns: [50, 60, 70, 80],
+    iirTakeIns: [100, 100, 100, 100],
   },
   {
     profile: 0,
@@ -27,12 +28,7 @@ const AnixCfgs = [{
 ];
 
 function makeSequences(anixCfgArray) {
-  const sequences = [
-    [],
-    [],
-    [],
-    []
-  ];
+  const sequences = [[], [], [], []];
 
   function setSequences(index, muxes) {
     muxes.forEach((mux, i) => {
@@ -54,10 +50,10 @@ function makeSequences(anixCfgArray) {
         setSequences(slaveNb, ["in0gnd", "in1gnd", "in2gnd", "in3gnd"]);
         break;
       case 12:
-        setSequences(slaveNb, ["in0gnd", "in1gnd", "in2in3"]);
+        setSequences(slaveNb, ["in0in1", "in2gnd", "in3gnd"]);
         break;
       case 21:
-        setSequences(slaveNb, ["in0in1", "in2gnd", "in3gnd"]);
+        setSequences(slaveNb, ["in0gnd", "in1gnd", "in2in3"]);
         break;
     }
   }
@@ -67,5 +63,6 @@ function makeSequences(anixCfgArray) {
 const sequences = makeSequences(AnixCfgs);
 
 export default {
-  sequences
+  sequences,
+  recurrenceInMs,
 };
